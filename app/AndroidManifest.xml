@@ -1,0 +1,37 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="travel.onroute.BalanceManager">
+
+    <application android:allowBackup="true"
+        android:label="@string/app_name"
+        android:icon="@drawable/ic_launcher">
+
+       <!-- <activity android:name="travel.onroute.balancemanager.TestActivity">
+        <intent-filter >
+            <action android:name="android.intent.action.MAIN" />
+
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>-->
+
+        <provider
+            android:authorities="travel.onroute.balancemanager.BalanceContentProvider"
+            android:name="travel.onroute.balancemanager.BalanceContentProvider" >
+        </provider>
+
+        <service android:name="travel.onroute.balancemanager.BalanceManager"/>
+
+        <receiver android:name="travel.onroute.balancemanager.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED"/>
+            </intent-filter>
+        </receiver>
+
+    </application>
+
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+
+
+</manifest>
