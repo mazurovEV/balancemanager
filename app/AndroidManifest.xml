@@ -1,11 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="travel.onroute.BalanceManager">
+    package="org.onroute.balancemanager">
 
     <application android:allowBackup="true"
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher">
 
-       <activity android:name="travel.onroute.balancemanager.TestActivity">
+       <activity android:name="org.onroute.balancemanager.TestActivity">
         <intent-filter >
             <action android:name="android.intent.action.MAIN" />
 
@@ -13,16 +13,16 @@
         </intent-filter>
         </activity>
 
-        <activity android:name="travel.onroute.balancemanager.SettingsActivity" />
+        <activity android:name="org.onroute.balancemanager.SettingsActivity" />
 
         <provider
-            android:authorities="travel.onroute.balancemanager.BalanceContentProvider"
-            android:name="travel.onroute.balancemanager.BalanceContentProvider" >
+            android:authorities="org.onroute.balancemanager.BalanceContentProvider"
+            android:name="org.onroute.balancemanager.BalanceContentProvider" >
         </provider>
 
-        <service android:name="travel.onroute.balancemanager.BalanceManager"/>
+        <service android:name="org.onroute.balancemanager.BalanceManager"/>
 
-        <receiver android:name="travel.onroute.balancemanager.BootReceiver">
+        <receiver android:name="org.onroute.balancemanager.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
