@@ -19,11 +19,12 @@ public class DbHelper extends SQLiteOpenHelper implements BaseColumns {
     static final String TRANSFER_COLUMN = "transfer";
     static final String RECEIVED_COLUMN = "received";
     static final String ALL_COLUMN = "all_traffic";
+    static final String STATUS_COLUMN = "status_traffic";
 
     private static final String DATABASE_CREATE_SQL = "create table "
             + DATABASE_TABLE + " ("+ LIMIT_COLUMN
-            + " integer, " + RECEIVED_COLUMN + " integer, " + TRANSFER_COLUMN
-            + " integer, " + ALL_COLUMN + " integer);";
+            + " integer, " + RECEIVED_COLUMN + " integer, " + TRANSFER_COLUMN + " integer, " + STATUS_COLUMN
+            + " integer DEFAULT 0, " + ALL_COLUMN + " integer);";
 
     public DbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

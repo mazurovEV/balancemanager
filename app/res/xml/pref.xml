@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="handle_traffic"
+        android:title="Handle Traffic interval(in ms)"
+        android:defaultValue="1000">
+    </EditTextPreference>
+    <EditTextPreference
+        android:key="password"
+        android:title="Chahnge password"
+        android:defaultValue="qwerty">
+    </EditTextPreference>
+</PreferenceScreen>

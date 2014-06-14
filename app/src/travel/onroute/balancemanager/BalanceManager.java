@@ -3,11 +3,13 @@ package travel.onroute.balancemanager;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.TrafficStats;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,18 +20,51 @@ import java.util.concurrent.ExecutionException;
  */
 public class BalanceManager extends Service {
 
+    public static final String MODE = "balance_manager_mode";
+    public static final String NEW_LIMIT = "new_limit";
+    public static final int START_MANAGE_TRAFFIC = 0;
+    public static final int NEW_TRAFFIC_PACK = 1;
+
     private Handler mHandler = new Handler();
     private Traffic mTraffic;
     private long mLimit;
+    private int mHandleInterval;
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        mHandleInterval = Integer.valueOf(pref.getString("handle_traffic", "1000"));
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        sendTrafficRequest();
-        Log.e("BalanceManager", "in fact, limit = " + mLimit);
-        getCachedTrafic();
-        Log.e("BalanceManager", "cachedTraffic: " + mTraffic);
-        mHandler.postDelayed(mRunnable, 1000);
+        switch (intent.getIntExtra(MODE, 0)) {
+            case START_MANAGE_TRAFFIC:
+                sendUnblockingIntnet();
+                sendTrafficRequest();
+                Log.e("BalanceManager", "in fact, limit = " + mLimit);
+                getCachedTrafic();
+                Log.e("BalanceManager", "cachedTraffic: " + mTraffic);
+                mHandler.postDelayed(mRunnable, mHandleInterval);
+                break;
+            case NEW_TRAFFIC_PACK:
+                sendUnblockingIntnet();
+                mHandler.removeCallbacks(mRunnable);
+                updateLimit(intent.getIntExtra(NEW_LIMIT, 0));
+                mHandler.postDelayed(mRunnable, mHandleInterval);
+        }
         return START_STICKY;
+    }
+
+    private void updateLimit(int limit) {
+        mLimit = limit;
+        ContentValues v = new ContentValues();
+        v.put(DbHelper.LIMIT_COLUMN, limit);
+        v.put(DbHelper.RECEIVED_COLUMN, 0);
+        v.put(DbHelper.TRANSFER_COLUMN, 0);
+        mTraffic = new Traffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes(), 0, 0);
+        updateOrInsert(v);
     }
 
     @Override
@@ -56,7 +91,9 @@ public class BalanceManager extends Service {
 
     private void getCachedTrafic() {
         Cursor c = getContentResolver().query(BalanceContentProvider.TRAFFIC_CONTENT_URI, new String[] {DbHelper.RECEIVED_COLUMN, DbHelper.TRANSFER_COLUMN}, null, null, null);
-        mTraffic = c.moveToFirst() ? new Traffic(c.getLong(c.getColumnIndex(DbHelper.RECEIVED_COLUMN)), c.getLong(c.getColumnIndex(DbHelper.RECEIVED_COLUMN))) : new Traffic(0, 0);
+        mTraffic = c.moveToFirst()
+                ? new Traffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes(), c.getLong(c.getColumnIndex(DbHelper.RECEIVED_COLUMN)), c.getLong(c.getColumnIndex(DbHelper.TRANSFER_COLUMN)))
+                : new Traffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes(), 0, 0);
     }
 
 
@@ -64,8 +101,9 @@ public class BalanceManager extends Service {
         public void run() {
             mTraffic.addTraffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes());
             saveTraffic();
-            sendBlockingIntent();
-            mHandler.postDelayed(mRunnable, 1000);
+            if(!sendBlockingIntent()) {
+                mHandler.postDelayed(mRunnable, mHandleInterval);
+            }
         }
     };
 
@@ -77,19 +115,40 @@ public class BalanceManager extends Service {
         updateOrInsert(v);
     }
 
-    private void sendBlockingIntent() {
-        if(mTraffic.getAll() > mLimit) {
-            Toast.makeText(this, "send BlockingIntent", Toast.LENGTH_LONG).show();
-            Intent intent = new Intent();
+    private void sendUnblockingIntnet() {
+        Toast.makeText(this, "send UnblockingIntent", Toast.LENGTH_LONG).show();
+         /* Intent intent = new Intent();
             intent.setClassName("com.prestigio.launcher.mdm", "com.prestigio.launcher.mdm.MdmLauncherActivity");
-            //intent.putExtra("enable", true); // enable
-            intent.putExtra("enable", false); // disable
-            intent.putExtra("disable", true); // disable
-            //intent.putExtra("disable", false); // enable
+            intent.putExtra("enable", true); // enable
+            intent.putExtra("disable", false); // enable
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            startActivity(intent);*/
+
+        ContentValues v = new ContentValues();
+        v.put(DbHelper.STATUS_COLUMN, 1);
+        updateOrInsert(v);
+    }
+
+    private boolean sendBlockingIntent() {
+        if(mTraffic.getAll() > mLimit) {
+            Toast.makeText(this, "send BlockingIntent", Toast.LENGTH_LONG).show();
+           /* Intent intent = new Intent();
+            intent.setClassName("com.prestigio.launcher.mdm", "com.prestigio.launcher.mdm.MdmLauncherActivity");
+            intent.putExtra("enable", false); // disable
+            intent.putExtra("disable", true); // disable
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);*/
+
+            ContentValues v = new ContentValues();
+            v.put(DbHelper.STATUS_COLUMN, 0);
+            updateOrInsert(v);
+
+            return true;
         }
+
+        return false;
     }
 
     private void updateOrInsert(ContentValues v) {
@@ -104,6 +163,7 @@ public class BalanceManager extends Service {
         @Override
         protected Long doInBackground(Void... params) {
             //TODO: запрос доступного трафика
+            Log.d("BalanceManager", "send limit request");
             return 10*1024*1024L;
         }
 

@@ -1,26 +1,30 @@
 package travel.onroute.balancemanager;
 
-import android.util.Log;
-
 /**
  * Created by e.mazurov on 08.06.2014.
  */
 public class Traffic {
-    long startReceivedBytes;
-    long startTransferBytes;
-    long receivedBytes;
-    long transferBytes;
+    private long offsetReceived;
+    private long offsetTransfered;
 
-    public Traffic(long r, long t) {
-        startReceivedBytes = r;
-        startTransferBytes = t;
+    private long dbReceived;
+    private long dbTransfered;
+
+    private long receivedBytes;
+    private long transferBytes;
+
+    public Traffic(long offsetR, long offsetT, long dbR, long dbT) {
+        offsetReceived = offsetR;
+        offsetTransfered = offsetT;
+
+        dbReceived = dbR;
+        dbTransfered = dbT;
     }
 
     public void addTraffic(long r, long t) {
-        Log.e("Traffic", "startR = " + startReceivedBytes + " r = " + r + " startT = " + startTransferBytes + " t = " + t);
-        receivedBytes = (startReceivedBytes > r ? startReceivedBytes : 0) + r;
-        transferBytes = (startTransferBytes > t ? startTransferBytes : 0) + t;
-        Log.e("Traffic", "R = " + receivedBytes + " T = " + transferBytes);
+       //TODO: Если перезапустили BM, и траффик шел в тот момент когда БМ не работал, то это не верная формула
+       receivedBytes = dbReceived + r - offsetReceived;
+       transferBytes = dbTransfered + t - offsetTransfered;
     }
 
     public void addReceivedTraffic(long r) {
@@ -41,10 +45,5 @@ public class Traffic {
 
     public long getAll() {
         return receivedBytes + transferBytes;
-    }
-
-    @Override
-    public String toString() {
-        return "startR = " + startReceivedBytes + "startT = " + startTransferBytes + "received = " + receivedBytes + ", transfer = " + transferBytes + ", all = " + getAll();
     }
 }

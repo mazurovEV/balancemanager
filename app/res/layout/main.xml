@@ -10,7 +10,7 @@
         android:textStyle="bold"
         android:gravity="center"
         android:paddingBottom="20dip"
-        android:text="Traffic Stats Demo" />
+        android:text="Balance Manager" />
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -39,4 +39,26 @@
         android:gravity="center"
         android:text="0"
         android:id="@+id/RX"/>
+
+    <EditText
+        android:id="@+id/add_traffic_pack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="add traffic pack(MB)"
+        android:inputType="number"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/button_add_traffic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Add traffic"/>
+
+    <Button
+        android:id="@+id/button_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Настройки"/>
 </LinearLayout>
