@@ -24,7 +24,6 @@ public class TestActivity extends Activity implements PasswordDialog.PassDialogL
     private static final int DIALOG_NEW_TRAFFIC = 0;
 
     private Handler mHandler = new Handler();
-    private int mHandleInterval;
     private int passDialogMode = -1;
     private EditText extraTraffic;
 
@@ -32,8 +31,6 @@ public class TestActivity extends Activity implements PasswordDialog.PassDialogL
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        mHandleInterval = Integer.valueOf(pref.getString("handle_traffic", "1000"));
 
         Button addTraffic = (Button) findViewById(R.id.button_add_traffic);
         extraTraffic = (EditText) findViewById(R.id.add_traffic_pack);
@@ -58,7 +55,12 @@ public class TestActivity extends Activity implements PasswordDialog.PassDialogL
         Intent i = new Intent(TestActivity.this, BalanceManager.class);
         i.putExtra(BalanceManager.MODE, BalanceManager.START_MANAGE_TRAFFIC);
         startService(i);
-        mHandler.postDelayed(mRunnable, mHandleInterval);
+        mHandler.postDelayed(mRunnable, getInterval());
+    }
+
+    private int getInterval() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        return Integer.valueOf(pref.getString("handle_traffic", "1000"));
     }
 
     private void showEditDialog() {
@@ -91,7 +93,7 @@ public class TestActivity extends Activity implements PasswordDialog.PassDialogL
             TextView TX = (TextView)findViewById(R.id.TX);
             RX.setText(Long.toString(hasData ? c.getLong(c.getColumnIndex(DbHelper.RECEIVED_COLUMN)) : 0));
             TX.setText(Long.toString(hasData ? c.getLong(c.getColumnIndex(DbHelper.TRANSFER_COLUMN)) : 0));
-            mHandler.postDelayed(mRunnable, mHandleInterval);
+            mHandler.postDelayed(mRunnable, getInterval());
         }
     };
 

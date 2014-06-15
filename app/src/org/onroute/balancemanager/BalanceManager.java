@@ -28,14 +28,7 @@ public class BalanceManager extends Service {
     private Handler mHandler = new Handler();
     private Traffic mTraffic;
     private long mLimit;
-    private int mHandleInterval;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        mHandleInterval = Integer.valueOf(pref.getString("handle_traffic", "1000"));
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -46,13 +39,13 @@ public class BalanceManager extends Service {
                 Log.e("BalanceManager", "in fact, limit = " + mLimit);
                 getCachedTrafic();
                 Log.e("BalanceManager", "cachedTraffic: " + mTraffic);
-                mHandler.postDelayed(mRunnable, mHandleInterval);
+                mHandler.postDelayed(mRunnable, getInterval());
                 break;
             case NEW_TRAFFIC_PACK:
                 sendUnblockingIntnet();
                 mHandler.removeCallbacks(mRunnable);
                 updateLimit(intent.getIntExtra(NEW_LIMIT, 0));
-                mHandler.postDelayed(mRunnable, mHandleInterval);
+                mHandler.postDelayed(mRunnable, getInterval());
         }
         return START_STICKY;
     }
@@ -102,7 +95,7 @@ public class BalanceManager extends Service {
             mTraffic.addTraffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes());
             saveTraffic();
             if(!sendBlockingIntent()) {
-                mHandler.postDelayed(mRunnable, mHandleInterval);
+                mHandler.postDelayed(mRunnable, getInterval());
             }
         }
     };
@@ -149,6 +142,11 @@ public class BalanceManager extends Service {
         }
 
         return false;
+    }
+
+    private int getInterval() {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        return Integer.valueOf(pref.getString("handle_traffic", "1000"));
     }
 
     private void updateOrInsert(ContentValues v) {
