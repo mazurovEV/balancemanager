@@ -1,6 +1,7 @@
 package org.onroute.balancemanager;
 
 import android.app.Service;
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -110,13 +111,18 @@ public class BalanceManager extends Service {
 
     private void sendUnblockingIntnet() {
         Toast.makeText(this, "send UnblockingIntent", Toast.LENGTH_LONG).show();
-         /* Intent intent = new Intent();
+        Log.d("BalanceManager", "sendUnblockingIntnet");
+        try {
+            Intent intent = new Intent();
             intent.setClassName("com.prestigio.launcher.mdm", "com.prestigio.launcher.mdm.MdmLauncherActivity");
-            intent.putExtra("enable", true); // enable
-            intent.putExtra("disable", false); // enable
+            intent.putExtra("enable", true);
+            intent.putExtra("disable", false);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);*/
+            startActivity(intent);
+        } catch(ActivityNotFoundException e) {
+            e.printStackTrace();
+        }
 
         ContentValues v = new ContentValues();
         v.put(DbHelper.STATUS_COLUMN, 1);
@@ -126,13 +132,18 @@ public class BalanceManager extends Service {
     private boolean sendBlockingIntent() {
         if(mTraffic.getAll() > mLimit) {
             Toast.makeText(this, "send BlockingIntent", Toast.LENGTH_LONG).show();
-           /* Intent intent = new Intent();
-            intent.setClassName("com.prestigio.launcher.mdm", "com.prestigio.launcher.mdm.MdmLauncherActivity");
-            intent.putExtra("enable", false); // disable
-            intent.putExtra("disable", true); // disable
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);*/
+            Log.d("BalanceManager", "sendBlockingIntent");
+            try {
+                Intent intent = new Intent();
+                intent.setClassName("com.prestigio.launcher.mdm", "com.prestigio.launcher.mdm.MdmLauncherActivity");
+                intent.putExtra("enable", false);
+                intent.putExtra("disable", true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            } catch(ActivityNotFoundException e) {
+                e.printStackTrace();
+            }
 
             ContentValues v = new ContentValues();
             v.put(DbHelper.STATUS_COLUMN, 0);

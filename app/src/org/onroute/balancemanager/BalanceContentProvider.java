@@ -7,7 +7,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.util.Log;
 
 /**
  * Created by e.mazurov on 08.06.2014.
@@ -43,21 +42,18 @@ public class BalanceContentProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        Log.d(LOG_TAG, "onCreate");
         dbHelper = new DbHelper(getContext());
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-        Log.d(LOG_TAG, "query, " + uri.toString());
-
         switch (uriMatcher.match(uri)) {
             case URI_TRAFFIC: // общий Uri
-                Log.d(LOG_TAG, "URI_TRAFFIC");
                 break;
             default:
-                throw new IllegalArgumentException("Wrong URI: " + uri);
+                //throw new IllegalArgumentException("Wrong URI: " + uri);
+                return null;
         }
         db = dbHelper.getWritableDatabase();
         Cursor cursor = db.query(DbHelper.DATABASE_TABLE, projection, selection,
@@ -70,7 +66,6 @@ public class BalanceContentProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        Log.d(LOG_TAG, "getType, " + uri.toString());
         switch (uriMatcher.match(uri)) {
             case URI_TRAFFIC:
                 return TRAFFIC_CONTENT_TYPE;
@@ -80,9 +75,10 @@ public class BalanceContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        Log.d(LOG_TAG, "insert, " + uri.toString());
-        if (uriMatcher.match(uri) != URI_TRAFFIC)
-            throw new IllegalArgumentException("Wrong URI: " + uri);
+        if (uriMatcher.match(uri) != URI_TRAFFIC) {
+            //throw new IllegalArgumentException("Wrong URI: " + uri);
+            return null;
+        }
 
         db = dbHelper.getWritableDatabase();
         long rowID = db.insert(DbHelper.DATABASE_TABLE, null, values);
@@ -99,13 +95,12 @@ public class BalanceContentProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        Log.d(LOG_TAG, "update, " + uri.toString());
         switch (uriMatcher.match(uri)) {
             case URI_TRAFFIC:
-                Log.d(LOG_TAG, "URI_TRAFFIC");
                 break;
             default:
-                throw new IllegalArgumentException("Wrong URI: " + uri);
+                //throw new IllegalArgumentException("Wrong URI: " + uri);
+                return 0;
         }
         db = dbHelper.getWritableDatabase();
         int cnt = db.update(DbHelper.DATABASE_TABLE, values, selection, selectionArgs);

@@ -17,7 +17,8 @@
 
         <provider
             android:authorities="org.onroute.balancemanager.BalanceContentProvider"
-            android:name="org.onroute.balancemanager.BalanceContentProvider" >
+            android:name="org.onroute.balancemanager.BalanceContentProvider"
+            android:exported="true">
         </provider>
 
         <service android:name="org.onroute.balancemanager.BalanceManager"/>
