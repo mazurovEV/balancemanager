@@ -15,7 +15,7 @@ import android.util.Log;
 public class BalanceContentProvider extends ContentProvider {
     final String LOG_TAG = "BalanceContentProvider";
 
-    private static final String AUTHORITY = "travel.onroute.balancemanager.BalanceContentProvider";
+    private static final String AUTHORITY = "org.onroute.balancemanager.BalanceContentProvider";
 
     static final String CONTACT_PATH = "traffic";
 
