@@ -34,7 +34,7 @@ public class PasswordDialog extends DialogFragment {
         getDialog().setTitle("Password");
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mPrefPass = pref.getString("password", "qwerty");
+        mPrefPass = pref.getString("password", "q");
 
         Button b = (Button) view.findViewById(R.id.button_ok);
         b.setOnClickListener(new View.OnClickListener() {

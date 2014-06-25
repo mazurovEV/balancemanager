@@ -8,7 +8,7 @@
     </EditTextPreference>
     <EditTextPreference
         android:key="password"
-        android:title="Chahnge password"
-        android:defaultValue="qwerty">
+        android:title="Change password"
+        android:defaultValue="q">
     </EditTextPreference>
 </PreferenceScreen>

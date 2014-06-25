@@ -5,7 +5,7 @@
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher">
 
-       <activity android:name="org.onroute.balancemanager.TestActivity">
+       <activity android:name="org.onroute.balancemanager.UserActivity">
         <intent-filter >
             <action android:name="android.intent.action.MAIN" />
 
@@ -14,6 +14,7 @@
         </activity>
 
         <activity android:name="org.onroute.balancemanager.SettingsActivity" />
+        <activity android:name="org.onroute.balancemanager.TestActivity" />
 
         <provider
             android:authorities="org.onroute.balancemanager.BalanceContentProvider"
@@ -28,6 +29,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="9fe8f4f3c401a5d84457a0cb810b275914bb8f2c"/>
 
     </application>
 
@@ -36,6 +38,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
 
 </manifest>
