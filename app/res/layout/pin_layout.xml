@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Введите пин"/>
+
+    <EditText
+        android:id="@+id/pin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="0"
+        android:inputType="number"/>
+
+    <Button
+        android:id="@+id/new_traffic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NEW"/>
+
+    <Button
+        android:id="@+id/add_traffic"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="REFIL"/>
+
+    <Button
+        android:id="@+id/start_balance_manager"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Go to Balance Manager"/>
+
+</LinearLayout>

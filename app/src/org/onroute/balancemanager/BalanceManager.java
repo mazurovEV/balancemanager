@@ -27,7 +27,8 @@ public class BalanceManager extends Service {
     public static final String MODE = "balance_manager_mode";
     public static final int START_MANAGE_TRAFFIC = 0;
     public static final int NEW_TRAFFIC_PACK = 1;
-    public static final int CHECK_LIMT = 2;
+    public static final int ADD_TRAFFIC_PACK = 2;
+    public static final int CHECK_LIMT = 3;
 
     public static final String NEW_LIMIT = "new_limit";
 
@@ -69,7 +70,13 @@ public class BalanceManager extends Service {
             case NEW_TRAFFIC_PACK:
                 sendUnblockingIntnet();
                 mHandler.removeCallbacks(mRunnable);
-                updateLimit(intent.getIntExtra(NEW_LIMIT, 0));
+                updateLimit(intent.getLongExtra(NEW_LIMIT, 0));
+                mHandler.post(mRunnable);
+                break;
+            case ADD_TRAFFIC_PACK:
+                sendUnblockingIntnet();
+                mHandler.removeCallbacks(mRunnable);
+                updateLimit(getLimitFromCache() + intent.getLongExtra(NEW_LIMIT, 0));
                 mHandler.post(mRunnable);
                 break;
             case CHECK_LIMT:
@@ -80,7 +87,7 @@ public class BalanceManager extends Service {
         return START_REDELIVER_INTENT;
     }
 
-    private void updateLimit(int limit) {
+    private void updateLimit(long limit) {
         mLimit = limit;
         ContentValues v = new ContentValues();
         v.put(DbHelper.LIMIT_COLUMN, limit);
@@ -97,10 +104,14 @@ public class BalanceManager extends Service {
         return null;
     }
 
+    private long getLimitFromCache() {
+        Cursor c = getContentResolver().query(BalanceContentProvider.TRAFFIC_CONTENT_URI, new String[] {DbHelper.LIMIT_COLUMN}, null, null, null);
+        return c.moveToFirst() ? c.getLong(c.getColumnIndex(DbHelper.LIMIT_COLUMN)) : 0;
+    }
+
 
     private void sendTrafficRequest(boolean force) {
-        Cursor c = getContentResolver().query(BalanceContentProvider.TRAFFIC_CONTENT_URI, new String[] {DbHelper.LIMIT_COLUMN}, null, null, null);
-        mLimit = c.moveToFirst() ? c.getLong(c.getColumnIndex(DbHelper.LIMIT_COLUMN)) : 0;
+        mLimit = getLimitFromCache();
         Log.e("BalanceManager", "limit from db = " + mLimit);
         if(mLimit == 0 || force) {
             try {
