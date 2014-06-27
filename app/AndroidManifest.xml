@@ -24,6 +24,15 @@
 
         <service android:name="org.onroute.balancemanager.BalanceManager"/>
 
+        <receiver
+            android:name="org.onroute.balancemanager.MobileNetReceiver"
+            android:label="NetworkChangeReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
         <receiver android:name="org.onroute.balancemanager.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>

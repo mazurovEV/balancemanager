@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -14,7 +15,6 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -110,19 +110,21 @@ public class TestActivity extends Activity {
 
                 connection.connect();
                 int statusCode = connection.getResponseCode();
-
-                //Get Response
-                InputStream is = connection.getInputStream();
-                BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-                String line;
-                StringBuffer response = new StringBuffer();
-                while((line = rd.readLine()) != null) {
-                    response.append(line);
-                    response.append('\r');
+                if(statusCode == 200) {
+                    //Get Response
+                    InputStream is = connection.getInputStream();
+                    BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+                    String line;
+                    StringBuffer response = new StringBuffer();
+                    while ((line = rd.readLine()) != null) {
+                        response.append(line);
+                        response.append('\r');
+                    }
+                    rd.close();
+                    return response.toString();
+                } else {
+                    return "";
                 }
-                rd.close();
-
-                return response.toString();
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;
@@ -136,6 +138,7 @@ public class TestActivity extends Activity {
         @Override
         //{"action":"accept","message":"","limit":5120,"update_perc":10,"update_time":3600,"allowance_end":36000}
         protected void onPostExecute(String s) {
+            if(TextUtils.isEmpty(s)) return;
             long limit = 0;
             try {
                 JSONObject o = new JSONObject(s);
@@ -163,20 +166,8 @@ public class TestActivity extends Activity {
     }
 
     private String getJsonParams() {
-        JSONArray arr = new JSONArray();
         JSONObject o = new JSONObject();
         try {
-           /* arr.put(new JSONObject().put("action", "activation"));
-            arr.put(new JSONObject().put("IMSI", imsi));
-            arr.put(new JSONObject().put("IMEI", imei));
-            arr.put(new JSONObject().put("locale", locale));
-            arr.put(new JSONObject().put("PIN", pin.getText().toString()));
-            arr.put(new JSONObject().put("is_new", isNew ? "1" : "0"));
-            arr.put(new JSONObject().put("time_zone", 240));
-            arr.put(new JSONObject().put("version", "0001"));
-            arr.put(new JSONObject().put("current_time", System.currentTimeMillis()));
-            arr.put(new JSONObject().put("tran_id", 1));*/
-
             o.put("action", "activation").put("IMSI", imsi).put("IMEI", imei).put("locale", locale).put("PIN", pin.getText().toString()).
                     put("is_new", isNew ? "1" : "0").put("time_zone", 240).put("version", "0001").put("current_time", System.currentTimeMillis()).
                     put("tran_id", 1);

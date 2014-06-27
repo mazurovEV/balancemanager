@@ -98,6 +98,7 @@ public class UserActivity extends Activity implements PasswordDialog.PassDialogL
             RX.setText(Long.toString(hasData ? c.getLong(c.getColumnIndex(DbHelper.RECEIVED_COLUMN)) : 0));
             TX.setText(Long.toString(hasData ? c.getLong(c.getColumnIndex(DbHelper.TRANSFER_COLUMN)) : 0));
             status.setText("(" + (c.getLong(c.getColumnIndex(DbHelper.STATUS_COLUMN)) == 0 ? "Off" : "On") + ")");
+            c.close();
             mHandler.postDelayed(mRunnable, getInterval());
         }
     };

@@ -29,12 +29,15 @@ public class BalanceManager extends Service {
     public static final int NEW_TRAFFIC_PACK = 1;
     public static final int ADD_TRAFFIC_PACK = 2;
     public static final int CHECK_LIMT = 3;
+    public static final int NETWORK_STATE_CHANGED = 4;
 
     public static final String NEW_LIMIT = "new_limit";
+    public static final String NETWORK_TYPE = "network_type";
 
     private String imei;
     private String imsi;
     private String locale;
+    private boolean is3G;
 
     private Handler mHandler = new Handler();
     private Traffic mTraffic;
@@ -43,6 +46,7 @@ public class BalanceManager extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        is3G = MobileNetReceiver.getConnectivityStatus(this) == MobileNetReceiver.TYPE_MOBILE;
         saveInitialData();
     }
 
@@ -55,6 +59,8 @@ public class BalanceManager extends Service {
         locale = current.getISO3Language();
         Log.d("BalanceManager", "imei = " + imei + " imsi = " + imsi + " locale = " + locale);
     }
+
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -83,6 +89,10 @@ public class BalanceManager extends Service {
                 sendTrafficRequest(true);
                 //здесь должны понять новый это трафик или нет
                 //если да - обновить поля в базе, если нет - продолжить в том же духе
+                break;
+            case NETWORK_STATE_CHANGED:
+                is3G = intent.getIntExtra(BalanceManager.NETWORK_TYPE, 0) == MobileNetReceiver.TYPE_MOBILE;
+                break;
         }
         return START_REDELIVER_INTENT;
     }
@@ -106,7 +116,9 @@ public class BalanceManager extends Service {
 
     private long getLimitFromCache() {
         Cursor c = getContentResolver().query(BalanceContentProvider.TRAFFIC_CONTENT_URI, new String[] {DbHelper.LIMIT_COLUMN}, null, null, null);
-        return c.moveToFirst() ? c.getLong(c.getColumnIndex(DbHelper.LIMIT_COLUMN)) : 0;
+        long limit = c.moveToFirst() ? c.getLong(c.getColumnIndex(DbHelper.LIMIT_COLUMN)) : 0;
+        c.close();
+        return limit;
     }
 
 
@@ -130,6 +142,7 @@ public class BalanceManager extends Service {
         mTraffic = c.moveToFirst()
                 ? new Traffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes(), c.getLong(c.getColumnIndex(DbHelper.RECEIVED_COLUMN)), c.getLong(c.getColumnIndex(DbHelper.TRANSFER_COLUMN)))
                 : new Traffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes(), 0, 0);
+        c.close();
     }
 
     private void saveInitTrafficValues() {
@@ -142,6 +155,7 @@ public class BalanceManager extends Service {
 
     private final Runnable mRunnable = new Runnable() {
         public void run() {
+            if(!is3G) return;
             mTraffic.addTraffic(TrafficStats.getTotalRxBytes(), TrafficStats.getTotalTxBytes());
             saveTraffic();
             if(!sendBlockingIntent()) {
@@ -235,4 +249,5 @@ public class BalanceManager extends Service {
             updateOrInsert(v);
         }
     }
+
 }
