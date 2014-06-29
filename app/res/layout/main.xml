@@ -36,7 +36,7 @@
         android:textSize="14sp"
         android:textColor="#00ff00"
         android:gravity="center"
-        android:text="Transmit Bytes" />
+        android:text="@string/t_bytes" />
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
         android:textSize="14sp"
         android:textColor="#ff0000"
         android:gravity="center"
-        android:text="Receive Bytes" />
+        android:text="@string/r_bytes" />
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="add traffic pack(MB)"
+        android:text="@string/add_traffic_label"
         android:paddingTop="20dp"
         android:gravity="center"/>
 
@@ -79,12 +79,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Add traffic"/>
+        android:text="@string/add_traffic_button"/>
 
     <Button
         android:id="@+id/button_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Настройки"/>
+        android:text="@string/settings"/>
 </LinearLayout>

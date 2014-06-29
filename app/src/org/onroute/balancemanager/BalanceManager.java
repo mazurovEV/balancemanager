@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -173,7 +172,7 @@ public class BalanceManager extends Service {
     }
 
     private void sendUnblockingIntnet() {
-        Toast.makeText(this, "send UnblockingIntent", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "send UnblockingIntent", Toast.LENGTH_LONG).show();
         Log.d("BalanceManager", "sendUnblockingIntnet");
         try {
             Intent intent = new Intent();
@@ -194,7 +193,7 @@ public class BalanceManager extends Service {
 
     private boolean sendBlockingIntent() {
         if(mTraffic.getAll() > mLimit) {
-            Toast.makeText(this, "send BlockingIntent", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "send BlockingIntent", Toast.LENGTH_LONG).show();
             Log.d("BalanceManager", "sendBlockingIntent");
             try {
                 Intent intent = new Intent();

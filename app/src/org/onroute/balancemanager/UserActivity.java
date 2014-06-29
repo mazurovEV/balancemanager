@@ -84,7 +84,7 @@ public class UserActivity extends Activity implements PasswordDialog.PassDialogL
                 startService(i);
             }
         } else {
-            Toast.makeText(this, "Wrong password", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.wrong_pass), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -97,7 +97,7 @@ public class UserActivity extends Activity implements PasswordDialog.PassDialogL
             TextView status = (TextView)findViewById(R.id.status);
             RX.setText(Long.toString(hasData ? c.getLong(c.getColumnIndex(DbHelper.RECEIVED_COLUMN)) : 0));
             TX.setText(Long.toString(hasData ? c.getLong(c.getColumnIndex(DbHelper.TRANSFER_COLUMN)) : 0));
-            status.setText("(" + (c.getLong(c.getColumnIndex(DbHelper.STATUS_COLUMN)) == 0 ? "Off" : "On") + ")");
+            status.setText("(" + (c.getLong(c.getColumnIndex(DbHelper.STATUS_COLUMN)) == 0 ? getString(R.string.off) : getString(R.string.on)) + ")");
             c.close();
             mHandler.postDelayed(mRunnable, getInterval());
         }

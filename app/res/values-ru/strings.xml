@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="success">Успех</string>
+    <string name="wrong_pass">Неверный пароль</string>
+    <string name="off">Выкл.</string>
+    <string name="on">Вкл.</string>
+    <string name="t_bytes">Переданные байты</string>
+    <string name="r_bytes">Принятые байты</string>
+    <string name="add_traffic_label">Добавить пакет трафика(MB)</string>
+    <string name="add_traffic_button">Добавить трафик</string>
+    <string name="settings">Настройки</string>
+    <string name="enter_pin_label">Введите PIN</string>
+    <string name="enter_pin_button">Введите PIN</string>
+    <string name="new_user">Новый пользователь</string>
+    <string name="go_to_BM">В BalanceManager</string>
+    <string name="confirmation_dialog">Подтвердите ваше действие</string>
+    <string name="confirmation_dialog_new_user">Внимание Пакеты данных на данном устройстве будут обнулены</string>
+    <string name="ok">Да</string>
+    <string name="cancel">Нет</string>
+</resources>

@@ -1,6 +1,7 @@
 package org.onroute.balancemanager;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -30,13 +31,17 @@ import java.util.Locale;
 /**
  * Created by e.mazurov on 08.06.2014.
  */
-public class TestActivity extends Activity {
+public class TestActivity extends Activity implements ConfirmationDialog.ConfirmationListener {
+
+    private static final int NEW_USER = 0;
+    private static final int ENTER_PIN = 1;
 
     private String imei;
     private String imsi;
     private String locale;
     private EditText pin;
     private boolean isNew;
+    private int confirmId = -1;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,8 +57,8 @@ public class TestActivity extends Activity {
         newTraffic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isNew = true;
-                new UpdateTrafficRequest().execute();
+                confirmId = NEW_USER;
+                showConfirmationDialog(R.string.confirmation_dialog_new_user);
             }
         });
 
@@ -62,8 +67,8 @@ public class TestActivity extends Activity {
         addTraffic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                isNew = false;
-                new UpdateTrafficRequest().execute();
+                confirmId = ENTER_PIN;
+                showConfirmationDialog(R.string.confirmation_dialog);
             }
         });
 
@@ -85,6 +90,29 @@ public class TestActivity extends Activity {
         Locale current = getResources().getConfiguration().locale;
         locale = current.getISO3Language();
         Log.d("BalanceManager", "imei = " + imei + " imsi = " + imsi + " locale = " + locale);
+    }
+
+    public void showConfirmationDialog(int title) {
+        DialogFragment dialog = ConfirmationDialog.newInstance(getString(title));
+        dialog.show(getFragmentManager(), "ConfirmationDialog");
+    }
+
+    @Override
+    public void onDialogPositiveClick(DialogFragment dialog) {
+        switch (confirmId) {
+            case NEW_USER:
+                isNew = true;
+                break;
+            case ENTER_PIN:
+                isNew = false;
+                break;
+        }
+        new UpdateTrafficRequest().execute();
+    }
+
+    @Override
+    public void onDialogNegativeClick(DialogFragment dialog) {
+        //Nothing to do
     }
 
     private class UpdateTrafficRequest extends AsyncTask<Void, Void, String> {
@@ -139,16 +167,16 @@ public class TestActivity extends Activity {
         //{"action":"accept","message":"","limit":5120,"update_perc":10,"update_time":3600,"allowance_end":36000}
         protected void onPostExecute(String s) {
             if(TextUtils.isEmpty(s)) return;
+            Log.d("BalanceManager", "Server response: " + s);
             long limit = 0;
             try {
                 JSONObject o = new JSONObject(s);
                 if(o.getString("action").equals("accept")) {
                     limit = o.getLong("limit");
-                    Toast.makeText(TestActivity.this, "new limit = " + limit, Toast.LENGTH_SHORT).show();
                 } else if(o.getString("action").equals("reject")) {
-                    Toast.makeText(TestActivity.this, "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TestActivity.this, getString(R.string.success), Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(TestActivity.this, "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TestActivity.this, o.getString("message"), Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

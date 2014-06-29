@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">BalanceManager</string>
+    <string name="success">Success</string>
+    <string name="wrong_pass">Wrong Password</string>
+    <string name="off">Off</string>
+    <string name="on">On</string>
+    <string name="t_bytes">Transmit bytes</string>
+    <string name="r_bytes">Received Bytes</string>
+    <string name="add_traffic_label">Add Traffic Pack(MB)</string>
+    <string name="add_traffic_button">Add Traffic</string>
+    <string name="settings">Settings</string>
+    <string name="enter_pin_label">Enter PIN</string>
+    <string name="enter_pin_button">Enter PIN</string>
+    <string name="new_user">New User</string>
+    <string name="go_to_BM">Go to BalanceManager</string>
+    <string name="confirmation_dialog">Confirm you action?</string>
+    <string name="confirmation_dialog_new_user">You data will be lost, confirm?</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>
